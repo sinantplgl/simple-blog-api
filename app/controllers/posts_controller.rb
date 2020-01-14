@@ -4,6 +4,7 @@ class PostsController < ApplicationController
     def index
         posts = Post.where.not(status: Post.statuses[:deleted]).where(is_draft: false)
         
+        #pagination, response might be improved with next page's data etc.
         skip = params[:skip].to_i
         take = params[:take].to_i
         
@@ -62,6 +63,8 @@ class PostsController < ApplicationController
         #check banner, if null set a defult image
         if !is_draft and params[:banner_pic].blank?
             post.banner_pic = "default_banner"
+        else
+            post.banner_pic = params[:banner_pic]
         end
 
         post.is_draft = is_draft
@@ -95,6 +98,37 @@ class PostsController < ApplicationController
         end
         post.is_draft = params[:is_draft]
 
+        #check title
+        if !post.is_draft and params[:title].blank?
+            response.set_message("Title cannot be empty...")
+            render json: response
+            return
+        end
+        post.title = params[:title]
+
+        #check description
+        if !post.is_draft and params[:description].blank?
+            response.set_message("Description cannot be empty...")
+            render json: response
+            return
+        end
+        post.description = params[:description]
+        
+        #check content
+        if !post.is_draft and params[:content].blank?
+            response.set_message("Content cannot be empty...")
+            render json: response
+            return
+        end
+        post.content = params[:content]
+        
+        #check banner, if null set a defult image
+        if !post.is_draft and params[:banner_pic].blank?
+            post.banner_pic = "default_banner"
+        else
+            post.banner_pic = params[:banner_pic]
+        end
+
         if not post.is_draft
             post.status = Post.statuses[:updated]
         end       
@@ -116,6 +150,7 @@ class PostsController < ApplicationController
             return
         end
 
+        #don't delete anything, just update its status to deleted
         post.status = Post.statuses[:deleted]
         psot.save!
     end
