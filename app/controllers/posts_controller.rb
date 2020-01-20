@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-    skip_before_action :authenticate_request, only: [:index, :show]
+    skip_before_action :authenticate_request, only: [:index, :show, :get_by_slug]
 
     def index
         posts = Post.where.not(status: Post.statuses[:deleted]).where(is_draft: false)
@@ -27,6 +27,21 @@ class PostsController < ApplicationController
 
         response.data = post.as_get_response
         
+        render json: response
+    end
+
+    def get_by_slug
+        response = BaseResponse.new
+
+        slug = params[:url_slug]
+        post = Post.where.not(status: Post.statuses[:deleted]).where(url_slug: slug, is_draft: false).first
+        if post.nil?
+            render status: :not_found
+            return
+        end
+
+        response.data = post.as_get_response
+
         render json: response
     end
 

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   
   get 'posts/drafts', to: 'posts#drafts', as: 'post_drafts'
   get 'posts/drafts/:id', to: 'posts#show_draft', as: 'post_draft'
+  get 'posts/get-by-slug/:url_slug', to: 'posts#get_by_slug'
   resources :posts
   
 end
