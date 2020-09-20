@@ -167,7 +167,7 @@ class PostsController < ApplicationController
 
         #don't delete anything, just update its status to deleted
         post.status = Post.statuses[:deleted]
-        psot.save!
+        post.save!
     end
 
     def drafts
